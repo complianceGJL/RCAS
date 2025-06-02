@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHIELD RCA Analysis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>SHIELD Root Cause Analysis</h1>
+            <p class="header__subtitle">Safety Human Incident & Error Learning Database</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Incident Definition Section -->
+            <section class="incident-section card">
+                <div class="card__header">
+                    <h2>Incident Definition</h2>
+                </div>
+                <div class="card__body">
+                    <div class="form-group">
+                        <label class="form-label" for="incident-description">Incident/Occurrence Description</label>
+                        <textarea id="incident-description" class="form-control" rows="4" placeholder="Describe the incident in detail..."></textarea>
+                    </div>
+                    <div class="flex gap-16">
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label" for="incident-date">Date & Time</label>
+                            <input type="datetime-local" id="incident-date" class="form-control">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label" for="incident-type">Incident Type</label>
+                            <select id="incident-type" class="form-control">
+                                <option value="">Select type...</option>
+                                <option value="near-miss">Near Miss</option>
+                                <option value="minor">Minor Incident</option>
+                                <option value="major">Major Incident</option>
+                                <option value="accident">Accident</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label" for="incident-domain">Domain</label>
+                            <select id="incident-domain" class="form-control">
+                                <option value="">Select domain...</option>
+                                <option value="aviation">Aviation</option>
+                                <option value="maritime">Maritime</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SHIELD Analysis Section -->
+            <section class="analysis-section">
+                <div class="analysis-header">
+                    <h2>SHIELD Analysis Framework</h2>
+                    <div class="analysis-controls">
+                        <button class="btn btn--secondary btn--sm" id="clear-analysis">Clear Analysis</button>
+                        <button class="btn btn--outline btn--sm" id="save-analysis">Save Analysis</button>
+                        <button class="btn btn--outline btn--sm" id="load-analysis">Load Analysis</button>
+                        <input type="file" id="load-file" accept=".json" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="shield-container">
+                    <!-- SHIELD Pyramid -->
+                    <div class="shield-pyramid">
+                        <div class="pyramid-layer layer-acts" id="layer-acts" data-layer="acts">
+                            <div class="layer-content">
+                                <h3>ACTS</h3>
+                                <p>What happened?</p>
+                                <div class="factor-count" id="acts-count">0 factors</div>
+                            </div>
+                        </div>
+                        <div class="pyramid-layer layer-preconditions" id="layer-preconditions" data-layer="preconditions">
+                            <div class="layer-content">
+                                <h3>PRECONDITIONS</h3>
+                                <p>Performance affecting factors</p>
+                                <div class="factor-count" id="preconditions-count">0 factors</div>
+                            </div>
+                        </div>
+                        <div class="pyramid-layer layer-operational" id="layer-operational" data-layer="operational_leadership">
+                            <div class="layer-content">
+                                <h3>OPERATIONAL LEADERSHIP</h3>
+                                <p>Local management decisions</p>
+                                <div class="factor-count" id="operational_leadership-count">0 factors</div>
+                            </div>
+                        </div>
+                        <div class="pyramid-layer layer-organisation" id="layer-organisation" data-layer="organisation">
+                            <div class="layer-content">
+                                <h3>ORGANISATION</h3>
+                                <p>Organizational influences</p>
+                                <div class="factor-count" id="organisation-count">0 factors</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Panel -->
+                    <div class="analysis-panel" id="analysis-panel">
+                        <div class="panel-header">
+                            <h3 id="panel-title">Select a layer to begin analysis</h3>
+                            <button class="btn btn--outline btn--sm" id="close-panel">×</button>
+                        </div>
+                        <div class="panel-content" id="panel-content">
+                            <p class="panel-instruction">Click on a layer in the SHIELD pyramid to start analyzing factors.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary Section -->
+            <section class="summary-section card" id="summary-section" style="display: none;">
+                <div class="card__header">
+                    <h2>Analysis Summary</h2>
+                    <div class="summary-actions">
+                        <button class="btn btn--primary btn--sm" id="export-summary">Export Report</button>
+                        <button class="btn btn--outline btn--sm" id="print-summary">Print</button>
+                    </div>
+                </div>
+                <div class="card__body">
+                    <div class="summary-stats" id="summary-stats"></div>
+                    <div class="summary-details" id="summary-details"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Factor Detail Modal -->
+    <div class="modal-overlay" id="factor-modal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Factor Details</h3>
+                <button class="btn btn--outline btn--sm" id="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="factor-description">Detailed Description</label>
+                    <textarea id="factor-description" class="form-control" rows="3" placeholder="Provide detailed description of this factor..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="factor-severity">Severity/Impact Rating</label>
+                    <select id="factor-severity" class="form-control">
+                        <option value="1">1 - Low Impact</option>
+                        <option value="2">2 - Minor Impact</option>
+                        <option value="3">3 - Moderate Impact</option>
+                        <option value="4">4 - High Impact</option>
+                        <option value="5">5 - Critical Impact</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="factor-evidence">Evidence/Supporting Information</label>
+                    <textarea id="factor-evidence" class="form-control" rows="3" placeholder="Document evidence or supporting information..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="factor-actions">Recommended Actions</label>
+                    <textarea id="factor-actions" class="form-control" rows="3" placeholder="Recommended corrective or preventive actions..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" id="cancel-factor">Cancel</button>
+                <button class="btn btn--primary" id="save-factor">Save Factor</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
